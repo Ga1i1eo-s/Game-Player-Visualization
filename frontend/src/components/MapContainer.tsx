@@ -22,7 +22,7 @@ export const MapContainer: React.FC = () => {
   const { selectedMap, selectedMatch, currentTime } = useStore();
   const [matchData, setMatchData] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
-  const [showHeatmap, setShowHeatmap] = useState(false); // Can be toggled
+  const [heatmapType, setHeatmapType] = useState<string>('none'); // 'none', 'traffic', 'kills', 'deaths'
 
   useEffect(() => {
     if (!selectedMatch) {
@@ -73,6 +73,14 @@ export const MapContainer: React.FC = () => {
     };
   }, [matchData, currentTime]);
 
+  const heatmapData = useMemo(() => {
+    if (heatmapType === 'none') return [];
+    if (heatmapType === 'traffic') return matchData;
+    if (heatmapType === 'kills') return matchData.filter(d => d.event === 'Kill' || d.event === 'BotKill');
+    if (heatmapType === 'deaths') return matchData.filter(d => d.event === 'Killed' || d.event === 'BotKilled' || d.event === 'KilledByStorm');
+    return [];
+  }, [matchData, heatmapType]);
+
   const layers = [
     // Background Minimap
     new BitmapLayer({
@@ -81,14 +89,18 @@ export const MapContainer: React.FC = () => {
       image: selectedMap ? MAP_IMAGES[selectedMap] : '',
     }),
     
-    // Traffic Heatmap
-    showHeatmap && new HeatmapLayer({
+    // Heatmaps
+    heatmapType !== 'none' && new HeatmapLayer({
       id: 'heatmap-layer',
-      data: matchData, // show all data for heatmap to see overall traffic
+      data: heatmapData,
       getPosition: (d: any) => [d.pixel_x, d.pixel_y],
-      getWeight: (d: any) => (d.event.includes('Kill') || d.event.includes('Death')) ? 10 : 1, // Kills have higher weight
-      radiusPixels: 20,
-      opacity: 0.5,
+      getWeight: () => 1,
+      radiusPixels: heatmapType === 'traffic' ? 20 : 35,
+      intensity: heatmapType === 'traffic' ? 1 : 2,
+      opacity: 0.6,
+      colorRange: heatmapType === 'deaths' 
+        ? [[255,255,255], [255,200,200], [255,100,100], [255,0,0], [150,0,0], [100,0,0]] // Blood red for deaths
+        : [[255,255,255], [255,255,178], [254,204,92], [253,141,60], [240,59,32], [189,0,38]], // Standard hot for traffic/kills
     }),
 
     // Player Paths
@@ -133,15 +145,18 @@ export const MapContainer: React.FC = () => {
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-red-500 border-t-transparent"></div>
         </div>
       )}
-      <div className="absolute top-4 right-4 z-10">
-        <button 
-          onClick={() => setShowHeatmap(!showHeatmap)}
-          className={`px-4 py-2 rounded-lg text-sm font-bold shadow-lg transition-all ${
-            showHeatmap ? 'bg-orange-500 text-white' : 'bg-stone-800 text-stone-400 hover:bg-stone-700'
-          }`}
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-3 bg-stone-900/80 backdrop-blur-md p-2 rounded-xl border border-stone-700/50 shadow-xl pointer-events-auto">
+        <label className="text-stone-300 text-xs font-bold uppercase tracking-wider ml-2">Heatmap:</label>
+        <select 
+          value={heatmapType} 
+          onChange={(e) => setHeatmapType(e.target.value)}
+          className="bg-stone-800 border border-stone-700 rounded-lg p-2 text-sm text-stone-200 outline-none focus:border-red-500 transition-colors"
         >
-          {showHeatmap ? 'Hide Traffic Heatmap' : 'Show Traffic Heatmap'}
-        </button>
+          <option value="none">Hidden</option>
+          <option value="traffic">Traffic Flow</option>
+          <option value="kills">Kill Zones</option>
+          <option value="deaths">Death Zones</option>
+        </select>
       </div>
       {!selectedMatch && !loading && (
         <div className="absolute inset-0 flex items-center justify-center z-10 text-stone-500 font-medium">
