@@ -117,8 +117,8 @@ export const MapContainer: React.FC = () => {
       lineWidthMinPixels: 1,
       getPosition: (d: any) => [d.pixel_x, d.pixel_y],
       getFillColor: (d: any) => {
+        if (d.event === 'KilledByStorm') return [128, 0, 128, 255]; // Purple for storm
         if (d.event.includes('Kill')) return [255, 0, 0, 255]; // Red for combat
-        if (d.event.includes('Storm')) return [128, 0, 128, 255]; // Purple for storm
         if (d.event === 'Loot') return [0, 255, 0, 255]; // Green for loot
         return [255, 255, 255, 255];
       },
