@@ -103,6 +103,9 @@ def preprocess():
         min_ts = group['ts'].min()
         group['ts'] = (group['ts'] - min_ts) * 1000
         
+        import datetime
+        date_str = datetime.datetime.fromtimestamp(min_ts).strftime('%Y-%m-%d')
+        
         map_id = group['map_id'].iloc[0]
         human_count = group[~group['is_bot']]['user_id'].nunique()
         bot_count = group[group['is_bot']]['user_id'].nunique()
@@ -111,6 +114,7 @@ def preprocess():
         match_info = {
             "match_id": str(match_id),
             "map_id": str(map_id),
+            "date": date_str,
             "human_count": int(human_count),
             "bot_count": int(bot_count),
             "duration": float(duration)

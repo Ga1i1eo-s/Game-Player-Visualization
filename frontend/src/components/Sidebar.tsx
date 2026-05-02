@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../store/useStore';
-import { Map, Users, Bot, Clock } from 'lucide-react';
+import { Map, Users, Bot, Clock, Calendar } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
-  const { selectedMap, selectedMatch, setMap, setMatch, setMaxTime } = useStore();
+  const { selectedMap, selectedDate, selectedMatch, setMap, setDate, setMatch, setMaxTime } = useStore();
   const [matches, setMatches] = useState<any[]>([]);
 
   useEffect(() => {
@@ -14,7 +14,11 @@ export const Sidebar: React.FC = () => {
   }, []);
 
   const maps = Array.from(new Set(matches.map(m => m.map_id)));
-  const availableMatches = matches.filter(m => m.map_id === selectedMap);
+  const dates = Array.from(new Set(matches.map(m => m.date).filter(Boolean))).sort();
+  
+  const availableMatches = matches.filter(m => 
+    m.map_id === selectedMap && (!selectedDate || m.date === selectedDate)
+  );
 
   const handleMatchSelect = (matchId: string) => {
     setMatch(matchId);
@@ -52,6 +56,24 @@ export const Sidebar: React.FC = () => {
             ))}
           </div>
         </div>
+
+        {dates.length > 0 && (
+          <div className="space-y-3">
+            <label className="text-xs font-semibold text-stone-400 uppercase tracking-wider flex items-center gap-2">
+              <Calendar size={14} /> Filter by Date
+            </label>
+            <select 
+              value={selectedDate || ''} 
+              onChange={(e) => setDate(e.target.value || null)}
+              className="w-full bg-stone-900 border border-stone-800 rounded-xl p-3 text-stone-300 outline-none focus:border-red-500/50"
+            >
+              <option value="">All Dates</option>
+              {dates.map(date => (
+                <option key={date as string} value={date as string}>{date}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div className="space-y-3">
           <label className="text-xs font-semibold text-stone-400 uppercase tracking-wider">
