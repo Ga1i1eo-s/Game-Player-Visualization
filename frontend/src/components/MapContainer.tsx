@@ -78,6 +78,7 @@ export const MapContainer: React.FC = () => {
     if (heatmapType === 'traffic') return matchData;
     if (heatmapType === 'kills') return matchData.filter(d => d.event === 'Kill' || d.event === 'BotKill');
     if (heatmapType === 'deaths') return matchData.filter(d => d.event === 'Killed' || d.event === 'BotKilled' || d.event === 'KilledByStorm');
+    if (heatmapType === 'storm') return matchData.filter(d => d.event === 'KilledByStorm');
     return [];
   }, [matchData, heatmapType]);
 
@@ -95,12 +96,14 @@ export const MapContainer: React.FC = () => {
       data: heatmapData,
       getPosition: (d: any) => [d.pixel_x, d.pixel_y],
       getWeight: () => 1,
-      radiusPixels: heatmapType === 'traffic' ? 20 : 35,
-      intensity: heatmapType === 'traffic' ? 1 : 2,
+      radiusPixels: heatmapType === 'traffic' ? 20 : (heatmapType === 'storm' ? 50 : 35),
+      intensity: heatmapType === 'traffic' ? 1 : (heatmapType === 'storm' ? 3 : 2),
       opacity: 0.6,
-      colorRange: heatmapType === 'deaths' 
+      colorRange: (heatmapType === 'deaths')
         ? [[255,255,255], [255,200,200], [255,100,100], [255,0,0], [150,0,0], [100,0,0]] // Blood red for deaths
-        : [[255,255,255], [255,255,178], [254,204,92], [253,141,60], [240,59,32], [189,0,38]], // Standard hot for traffic/kills
+        : (heatmapType === 'storm')
+          ? [[255,255,255], [230,190,255], [190,100,255], [150,0,255], [100,0,200], [70,0,150]] // Purple for storm
+          : [[255,255,255], [255,255,178], [254,204,92], [253,141,60], [240,59,32], [189,0,38]], // Standard hot for traffic/kills
     }),
 
     // Player Paths
@@ -156,6 +159,7 @@ export const MapContainer: React.FC = () => {
           <option value="traffic">Traffic Flow</option>
           <option value="kills">Kill Zones</option>
           <option value="deaths">Death Zones</option>
+          <option value="storm">Storm Deaths</option>
         </select>
       </div>
       {!selectedMatch && !loading && (
