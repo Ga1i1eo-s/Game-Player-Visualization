@@ -7,8 +7,8 @@ import { useStore } from '../store/useStore';
 
 const INITIAL_VIEW_STATE = {
   target: [512, 512, 0] as [number, number, number],
-  zoom: -0.1,
-  minZoom: -1.5,
+  zoom: 0.8,
+  minZoom: -1,
   maxZoom: 4,
 };
 
