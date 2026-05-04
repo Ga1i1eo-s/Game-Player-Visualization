@@ -32,7 +32,7 @@ export const Sidebar: React.FC = () => {
     <div className="w-80 bg-stone-950 text-white flex flex-col h-full border-r border-stone-800 shadow-2xl">
       <div className="p-6 pb-4 border-b border-stone-800">
         <h1 className="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">LILA BLACK</h1>
-        <p className="text-stone-400 text-sm mt-1">Player Journey Vis</p>
+        <p className="text-stone-400 text-sm mt-1">Player Journey Visualization</p>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
