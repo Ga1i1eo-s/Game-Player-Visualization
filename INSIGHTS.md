@@ -26,3 +26,13 @@ With the completion of the Player Journey Visualization tool, several interestin
 - **What caught my eye:** Bot paths sometimes get clustered tightly against certain mountain ranges or rivers in `GrandRift`.
 - **Supporting Evidence:** The `PathLayer` clearly shows bots (orange lines) moving in unnaturally straight lines and getting stuck running parallel against terrain obstacles instead of pathing around them smoothly like humans (blue lines) do.
 - **Actionable Item:** Level Designers need to smooth out the NavMesh (Navigation Mesh) along these steep inclines and riverbanks. Alternatively, add small bridges or shallow crossing points exactly where the visualizer shows bots struggling to cross natural boundaries.
+
+## Insight 4: Lack of Flanking Routes in High-Combat Corridors
+- **What caught my eye:** On the `AmbroseValley` map, player paths and kill events are funneled heavily straight down the main central road, with almost no usage of the surrounding elevated terrain.
+- **Supporting Evidence:** The PathLayer (blue lines) heavily overlaps along the central valley road, and the "Kill Zones" heatmap shows intense, chaotic combat right on the open road. There are very few paths branching into the hillsides, indicating players aren't using the high ground.
+- **Actionable Item:** Level Designers should carve out small, covered footpaths along the hillsides overlooking the main valley road. Adding rocky outcroppings, fallen trees, or small sniper nests will encourage players to take high-ground flanking routes rather than funneling directly into a slaughter on the main road.
+
+## Insight 5: Unused Outer-Edge POIs due to Lack of Early Loot
+- **What caught my eye:** Several small building clusters on the extreme Northwest edge of the `GrandRift` map have zero `Loot` events and zero human pathing across almost all match dates.
+- **Supporting Evidence:** The PathLayer for humans completely ignores the Northwest quadrant of the map. When cross-referencing with the Scatterplot layer, there are absolutely no green dots (Looting) in that area, indicating players have learned it's not worth visiting.
+- **Actionable Item:** Level Designers should guarantee at least one high-tier loot chest spawn or a permanent vehicle spawn in these extreme edge POIs. This gives players a tangible incentive to land there early and utilizes the full map area, rather than dropping exclusively into the central hot-drops.
